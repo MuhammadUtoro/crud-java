@@ -1,12 +1,8 @@
 package org.crud;
 
-import jakarta.ws.rs.Produces;
+import io.vertx.ext.auth.User;
+import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -23,8 +19,8 @@ public class UserResource {
         return userService.greeting();
     }
 
-    @Path("all")
     @GET
+    @Path("all")
     public Response getUsers() {
         return userService.getUsers();
     }
@@ -34,9 +30,21 @@ public class UserResource {
         return userService.addUser(userDTO);
     }
 
-    @Path("{id}")
     @GET
+    @Path("{id}")
     public Response getSingleUser(@PathParam("id") String id) {
         return userService.getSingleUser(id);
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response updateUser(@PathParam("id") String id, UserDTO updatedUser) {
+        return userService.updateUser(id, updatedUser);
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response deleteUser(@PathParam("id") String id) {
+        return userService.deleteUser(id);
     }
 }
