@@ -40,6 +40,9 @@ public class UserService {
     public Response getUsers() {
         Collection<UserDTO> allUsers = users.values();
         System.out.println("Returning " + allUsers.size() + " users.");  // Debugging line
+        if (allUsers.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("No users are found! Please add one!").build();
+        }
         return Response.ok(allUsers).build();
     }
 

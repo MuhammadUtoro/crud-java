@@ -1,6 +1,7 @@
 package org.crud;
 
 import io.vertx.ext.auth.User;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
@@ -26,7 +27,7 @@ public class UserResource {
     }
 
     @POST
-    public Response addUser(UserDTO userDTO) {
+    public Response addUser(@Valid UserDTO userDTO) {
         return userService.addUser(userDTO);
     }
 

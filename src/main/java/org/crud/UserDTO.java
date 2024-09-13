@@ -2,17 +2,22 @@ package org.crud;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 
 public class UserDTO {
     private String id;
+    @NotEmpty(message = "name cannot be empty field")
     private String name;
+    @NotEmpty(message = "email cannot be empty field")
     private String email;
+    @Positive(message = "age must be a positive integer")
     private int age;
 
     @JsonCreator
-    public UserDTO(@JsonProperty("id") String id, 
-                   @JsonProperty("name") String name, 
-                   @JsonProperty("email") String email, 
+    public UserDTO(@JsonProperty("id") String id,
+                   @JsonProperty("name") String name,
+                   @JsonProperty("email") String email,
                    @JsonProperty("age") int age) {
         this.id = id;
         this.name = name;
