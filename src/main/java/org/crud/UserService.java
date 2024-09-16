@@ -104,6 +104,18 @@ public class UserService {
         if (user == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
         }
+
+        if (updatedUser.getName() == null || updatedUser.getName().trim().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Name field cannot be empty").build();
+        }
+
+        if (updatedUser.getEmail() == null || updatedUser.getEmail().trim().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Email field cannot be empty").build();
+        }
+
+        if (updatedUser.getAge() <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Age must be a positive integer!").build();
+        }
         try {
             user.updateNewUser(updatedUser);
             users.put(id, user);
