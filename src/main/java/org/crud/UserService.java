@@ -76,6 +76,7 @@ public class UserService {
             e.printStackTrace();
         }
     }
+
     // Loading all users at start
     private void loadUsersFromFile() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -98,7 +99,7 @@ public class UserService {
         return Response.ok(user).build();
     }
 
-    // Update Swimmer by ID
+    // Update User by ID
     public Response updateUser(String id, UserDTO updatedUser) {
         UserDTO user = users.get(id);
         if (user == null) {
@@ -128,7 +129,7 @@ public class UserService {
         }
     }
 
-    // Delete ID by Swimmer
+    // Delete User by ID
     public Response deleteUser(String id) {
         UserDTO user = users.get(id);
         if (user == null) {
