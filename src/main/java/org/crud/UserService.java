@@ -48,6 +48,19 @@ public class UserService {
 
     // Add a new user
     public Response addUser(UserDTO userDTO) {
+        if (userDTO == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("User data cannot be empty").build();
+        }
+        if (userDTO.getName() == null || userDTO.getName().trim().isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Name field cannot be empty or blank!").build();
+        }
+        if (userDTO.getEmail() == null || userDTO.getEmail().trim().isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Email field cannot be empty or blank!").build();
+        }
+        if (userDTO.getAge() <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Age must be a positive integer").build();
+        }
+
         String id = UUID.randomUUID().toString();
         userDTO.setId(id);
         users.put(id, userDTO);
@@ -90,16 +103,17 @@ public class UserService {
         UserDTO user = users.get(id);
         if (user == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
-
         }
-
-        user.setName(updatedUser.getName());
-        user.setEmail(updatedUser.getEmail());
-        user.setAge(updatedUser.getAge());
-
-        users.put(id, user);
-        saveUsersToFile();
-        return Response.ok("User has been updated").build();
+        try {
+            user.updateNewUser(updatedUser);
+            users.put(id, user);
+            saveUsersToFile();
+            return Response.ok("User has been updated").build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("An error occurred while updating the user").build();
+        }
     }
 
     // Delete ID by Swimmer
