@@ -133,11 +133,13 @@ public class UserService {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
         }
 
+        // From entity to DTO
         UserDTO updatedUserDTO = new UserDTO(userEntity.id.toString(), userEntity.getName().toString(), userEntity.getEmail(), userEntity.getAge());
 
         try {
             updatedUserDTO.updateNewUser(updatedUser);
-    
+            
+            // From DTO to entity and update the mongoDB database
             userEntity.setName(updatedUserDTO.getName());
             userEntity.setEmail(updatedUserDTO.getEmail());
             userEntity.setAge(updatedUserDTO.getAge());
@@ -147,24 +149,6 @@ public class UserService {
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
-
-        // if (updatedUser.getName() != null && !updatedUser.getName().trim().isEmpty()) {
-        //     userEntity.setName(updatedUser.getName().trim());
-        // }  else if (updatedUser.getName() == null) {
-        //     return Response.status(Response.Status.BAD_REQUEST).entity("Name field cannot be empty").build();
-        // }
-
-        // if (updatedUser.getEmail() != null && !updatedUser.getEmail().trim().isEmpty()) {
-        //     userEntity.setEmail(updatedUser.getEmail().trim());
-        // }  else if (updatedUser.getEmail() == null) {
-        //     return Response.status(Response.Status.BAD_REQUEST).entity("Email field cannot be empty").build();
-        // }
-
-        // if (updatedUser.getAge() > 0) {
-        //     userEntity.setAge(updatedUser.getAge());
-        // } else if (updatedUser.getAge() <= 0) {
-        //     return Response.status(Response.Status.BAD_REQUEST).entity("Age must be a positive integer!").build();
-        // }
 
 //         try {
 //             userEntity.persist();
