@@ -1,6 +1,6 @@
 package org.crud;
 
-import io.vertx.ext.auth.User;
+// import io.vertx.ext.auth.User;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
