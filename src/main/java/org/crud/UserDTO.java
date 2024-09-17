@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
-import jakarta.ws.rs.core.Response;
+// import jakarta.ws.rs.core.Response;
 
 public class UserDTO {
     private String id;
@@ -52,16 +52,20 @@ public class UserDTO {
     }
 
     public void updateNewUser(UserDTO updatedUser) {
-        if  (updatedUser.getName() != null && !updatedUser.getName().trim().isEmpty()){
-            this.name = updatedUser.getName().trim();
+        if  (updatedUser.getName() == null || updatedUser.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Name field cannot be empty or blank!");
         }
 
-        if (updatedUser.getEmail() != null && !updatedUser.getEmail().trim().isEmpty()) {
-            this.email = updatedUser.getEmail().trim();
+        if (updatedUser.getEmail() == null || updatedUser.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email field cannot be empty or blank!");
         }
 
-        if (updatedUser.getAge() > 0) {
-            this.age = updatedUser.getAge();
+        if (updatedUser.getAge() <= 0) {
+            throw new IllegalArgumentException("Age field must be a positive integer!");
         }
+
+        this.name = updatedUser.getName().trim();
+        this.email = updatedUser.getEmail().trim();
+        this.age = updatedUser.getAge();
     }
 }

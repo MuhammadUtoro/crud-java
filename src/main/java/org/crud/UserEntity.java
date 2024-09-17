@@ -3,7 +3,7 @@ package org.crud;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 
-@MongoEntity
+@MongoEntity(collection="User")
 public class UserEntity extends PanacheMongoEntity {
     private String name;
     private String email;

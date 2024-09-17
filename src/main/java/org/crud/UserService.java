@@ -5,10 +5,11 @@ package org.crud;
 //import java.nio.file.Path;
 //import java.nio.file.Paths;
 import java.util.*;
-
+import org.bson.types.ObjectId; // Import ObjectId
 //import com.fasterxml.jackson.core.type.TypeReference;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 
+// import io.vertx.mutiny.ext.auth.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Response;
 //import org.w3c.dom.stylesheets.LinkStyle;
@@ -100,7 +101,16 @@ public class UserService {
 
     // Get user by ID
     public Response getSingleUser(String id) {
-        UserEntity userEntity = UserEntity.findById(id);
+        ObjectId objectId;
+        System.out.println("Received ID: " + id); // Log received ID
+
+        try {
+            objectId = new ObjectId(id);
+        } catch(IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid ObjectId format!").build();
+        }
+
+        UserEntity userEntity = UserEntity.findById(objectId);
 //        UserDTO user = users.get(id);
         if(userEntity == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
@@ -110,45 +120,72 @@ public class UserService {
 
     // Update User by ID
     public Response updateUser(String id, UserDTO updatedUser) {
-        UserEntity userEntity = UserEntity.findById(id);
+        ObjectId objectId;
+
+        try {
+            objectId = new ObjectId(id);
+        } catch(IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid ObjectId format!").build();
+        } 
+
+        UserEntity userEntity = UserEntity.findById(objectId);
         if (userEntity == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
         }
 
-        if (updatedUser.getName() == null || updatedUser.getName().trim().isEmpty()) {
-            userEntity.setName(updatedUser.getName().trim());
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Name field cannot be empty").build();
+        UserDTO updatedUserDTO = new UserDTO(userEntity.id.toString(), userEntity.getName().toString(), userEntity.getEmail(), userEntity.getAge());
 
-        }
-
-        if (updatedUser.getEmail() == null || updatedUser.getEmail().trim().isEmpty()) {
-            userEntity.setEmail(updatedUser.getEmail().trim());
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Email field cannot be empty").build();
-        }
-
-        if (updatedUser.getAge() <= 0) {
-            userEntity.setAge(updatedUser.getAge());
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Age must be a positive integer!").build();
-        }
         try {
-            userEntity.persist();
-//            user.updateNewUser(updatedUser);
-//            users.put(id, user);
-//            saveUsersToFile();
-            return Response.ok("User has been updated").build();
+            updatedUserDTO.updateNewUser(updatedUser);
+    
+            userEntity.setName(updatedUserDTO.getName());
+            userEntity.setEmail(updatedUserDTO.getEmail());
+            userEntity.setAge(updatedUserDTO.getAge());
+    
+            userEntity.update();
+            return Response.ok("User updated successfully").build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("An error occurred while updating the user").build();
         }
+
+        // if (updatedUser.getName() != null && !updatedUser.getName().trim().isEmpty()) {
+        //     userEntity.setName(updatedUser.getName().trim());
+        // }  else if (updatedUser.getName() == null) {
+        //     return Response.status(Response.Status.BAD_REQUEST).entity("Name field cannot be empty").build();
+        // }
+
+        // if (updatedUser.getEmail() != null && !updatedUser.getEmail().trim().isEmpty()) {
+        //     userEntity.setEmail(updatedUser.getEmail().trim());
+        // }  else if (updatedUser.getEmail() == null) {
+        //     return Response.status(Response.Status.BAD_REQUEST).entity("Email field cannot be empty").build();
+        // }
+
+        // if (updatedUser.getAge() > 0) {
+        //     userEntity.setAge(updatedUser.getAge());
+        // } else if (updatedUser.getAge() <= 0) {
+        //     return Response.status(Response.Status.BAD_REQUEST).entity("Age must be a positive integer!").build();
+        // }
+
+//         try {
+//             userEntity.persist();
+// //            user.updateNewUser(updatedUser);
+// //            users.put(id, user);
+// //            saveUsersToFile();
+//             return Response.ok("User has been updated").build();
+//         } catch (IllegalArgumentException e) {
+//             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+//         } catch (Exception e) {
+//             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("An error occurred while updating the user").build();
+//         }
     }
 
     // Delete User by ID
     public Response deleteUser(String id) {
-        UserEntity userEntity = UserEntity.findById(id);
+        ObjectId objectId;
+
+        objectId = new ObjectId(id);
+
+        UserEntity userEntity = UserEntity.findById(objectId);
         if (userEntity == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found!").build();
         }
